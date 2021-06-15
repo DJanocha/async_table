@@ -4,23 +4,41 @@ import { Table } from 'reactstrap'
 import { v4 as uuid } from 'uuid'
 
 const TabelaJSON = (props) => {
+    const obsluzKlikniecieKolumny = (klucz) => {
+        alert(klucz);
+        console.log(props);
+    }
+    const obsluzKlikniecieRzedu = (rzad) => {
+        const klucze = zdobadzKlucze();
+        klucze.map((klucz) => {
+            return console.log(rzad[klucz])
+        })
+        console.log(rzad.id_firmy);
+    }
     const zdobadzKlucze = () => {
         return Object.keys(props.dane[0]);
     }
     const RenderujKlucze = () => {
         const klucze = zdobadzKlucze();
         return klucze.map((klucz) => {
-            return <th key={uuid()}>{klucz.toUpperCase()}</th>
+            return <th key={uuid()} className="Kolumna" onClick={() => { obsluzKlikniecieKolumny(klucz) }}>{klucz.toUpperCase()}</th>
         })
     }
+    const RenderujPaskiWyszukiwania = () => {
+        const klucze = zdobadzKlucze();
+        return klucze.map((klucz) => {
+            return <th key={uuid()}> <input type="text" /> </th>
+        });
+    }
+
     const RenderujRzad = (props) => {
         const klucze = Object.keys(props.dane);
         return klucze.map((klucz) => {
-            return <td key={uuid()}>{props.dane[klucz]}</td>
+            return <td key={uuid()} onClick={()=>{obsluzKlikniecieRzedu(props.dane)}}>{props.dane[klucz]}</td>
         });
     }
     const RenderujRzedy = (props) => {
-       // const data = Array.from(props.data);
+        // const data = Array.from(props.data);
         return props.dane.map((rzad) => {
             return <tr key={uuid()}><RenderujRzad dane={rzad} klucze={zdobadzKlucze()} /></tr>
         });
@@ -31,6 +49,7 @@ const TabelaJSON = (props) => {
                 <tr><RenderujKlucze /></tr>
             </thead>
             <tbody>
+                <tr><RenderujPaskiWyszukiwania /></tr>
                 <RenderujRzedy dane={props.dane} />{/*cala tabele przekazujemy*/}
             </tbody>
         </Table>

@@ -1,6 +1,7 @@
  import {call, put, takeEvery } from 'redux-saga/effects'
 
- const apiUrl= "http://localhost:7777/id_firmy/1"
+ const apiUrl= "http://localhost:7777/id_firmy?limit=40"
+ //const apiUrll = useEffe
 
 //firmySaga nasluchuje wszystkich akcji typu ZAPYTANIE_WEZ_FIRMY i dla kazdej uruchamia generator "przyniesFirmy", ktory probuje 
 //sie polaczyc  za pomoca metody "wezOdApi" i co z tym robi? jesli polaczenie sie nawiaze uzywa yield put z akcja w srodku.
@@ -24,9 +25,16 @@
          yield put ({type: 'ZAPYTANIE_WEZ_FIRMY_ZAKONCZONE_NIEPOWODZENIEM', message: error.message})
      }
  }
+ function* zmienSortowanie(){
+     try{
+        const firmy = yield call()
+     }catch(error){
+
+     };
+ }
 
  function* firmySaga(){
-     yield takeEvery('ZAPYTANIE_WEZ_FIRMY', przyniesFirmy) 
+     yield takeEvery('ZAPYTANIE_WEZ_FIRMY', przyniesFirmy)
  }
 
  export default firmySaga;
