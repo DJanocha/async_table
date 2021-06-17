@@ -5,12 +5,8 @@ const stanDomyslny = {
     firmy: [],
     czyWczytuje: false,
     blad: null,
-    sortowanieWedlug: "id_firmy",
-    limit: 20,
-    offset: 0,
-    port: 7777,
-    adresIP: "localhost",
-    idSzukanejFirmy: 1,
+    sortowanieWedlug: "nazwa"//to do wywalenia
+
 }
 
     // },
@@ -18,11 +14,11 @@ const stanDomyslny = {
 // };
 export default function Firmy(stan = stanDomyslny, akcja) {
     switch (akcja.type) {
-        case typy.ZMIEN_SORTOWANIE:
-            return {
-                ...stan,
-                sortowanieWedlug: akcja.sortowanieWedlug
-            }
+        // case typy.ZMIEN_SORTOWANIE:
+        //     return {
+        //         ...stan,
+        //         sortowanieWedlug: akcja.sortowanieWedlug
+        //     }
         case typy.ZAPYTANIE_WEZ_FIRMY:
             return {
                 ...stan,

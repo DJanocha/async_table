@@ -5,6 +5,7 @@ import { v4 as uuid } from 'uuid'
 
 const TabelaJSON = (props) => {
     const obsluzKlikniecieKolumny = (klucz) => {
+        props.sortuj(klucz);
         alert(klucz);
         console.log(props);
     }

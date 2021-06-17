@@ -20,8 +20,9 @@ router.get('/id_firmy/:id', async(req,res)=>{
 router.get('/:orderBy', async(req,res)=>{
     const pomocnik = new KreatorZapytan();
     const kontroler = new Firmy();
-    const zapytanie = await pomocnik.wezStringZapytaniaSQL(req.params,req.query);//tu sie wywala
-    res.send(await kontroler.zapytaj(zapytanie));
+    const zapytanie = await pomocnik.wezStringZapytaniaSQL(req.params,req.query);//
+    // res.send(zapytanie);//wyswietl zapytanie gotowe
+    res.send(await kontroler.zapytaj(zapytanie)); // lub wyswietl odpowiedz na zapytanie
 
 })
 

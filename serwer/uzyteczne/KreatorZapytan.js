@@ -15,11 +15,17 @@ class KreatorZapytan {
         this.ID = {
         }
         this.porownajPrzyUzyciuLike = {};
+        this.mozliweKolumny = undefined
     }
-    
+
     async wezStringZapytaniaSQL(parametryZRequestParams, parametryZRequestQuery) {
+        // console.log("mozliwe kolumny przed zainicjowaniem:")
+        // console.log(this.mozliweKolumny)
         await this.zdobadzNazwyKolumnPotrzebneDoPorownywania();
+        console.log("MOZLIWE KOLUMNY po zainicjalizowaniu")
+        console.log(this.mozliweKolumny);
         await this.rozdysponujElementyZapytaniaDoBazy(parametryZRequestParams, parametryZRequestQuery);
+        // this.wylisujWszystko();//dla testu // rozdysponowanie wszystkiego nie dziala narazie!!!
         this.zapytanie_select();
         this.zapytanie_from();
         this.zapytanie_where();
@@ -34,14 +40,21 @@ class KreatorZapytan {
 
     async zdobadzNazwyKolumnTabeli() {
         const kolumny = await dbconfig.query("SELECT column_name FROM INFORMATION_SCHEMA.columns WHERE table_name = 'firmy';").catch(console.log);
+        //console.log(kolumny.rows);
         return kolumny.rows;
     }
-    async zdobadzNazwyKolumnPotrzebneDoPorownywania() {
-        var mozliweKolumny = await this.zdobadzNazwyKolumnTabeli(); // bierzemy z tabeli(z bazy danych) info jakie w ogole sa kolumy w niej
-        
-        var nazwyKolumn = mozliweKolumny.map((col) => { // chcialem nie tworzyc dwoch roznych tabeli, ale sie pluje przy map na async func
+    async zdobadzNazwyKolumnPotrzebneDoPorownywania() {//dziala narazie
+        const _mozliweKolumny = await this.zdobadzNazwyKolumnTabeli(); // bierzemy z tabeli(z bazy danych) info jakie w ogole sa kolumy w niej
+        // console.log('mozliwe kolumny w metodzie zdobadznazwy*()):')
+        // console.log(this.mozliweKolumny)
+        // console.log("test1")
+        var nazwyKolumn = _mozliweKolumny.map((col) => { // chcialem nie tworzyc dwoch roznych tabeli, ale sie pluje przy map na async func
             return col.column_name; // postgres zwraca tablice z nazwami tabeli, wiec column_name jest z postgresa. nie mozna tego na polski przetlumaczyc, bo sie posypie.
         })
+        this.mozliweKolumny = nazwyKolumn;
+        // console.log("test1")
+        console.log("kurdelebleeeeeee:")
+        console.log(this.mozliweKolumny)
 
         for (var i in nazwyKolumn) {
 
@@ -54,26 +67,100 @@ class KreatorZapytan {
                 this.porownajPrzyUzyciuLike[elem] = undefined;//lub do porownajPrzyUzyciuLike. wiemy dzieki temu, jakie rzeczy mozemy porownywac w ogole w query
             }
         }
+        // console.log("tutaj sprawdzamy czy dobrze sie dodaly kolumny do klasy (comparelike, compareexact itd):") 
+        // this.wylisujWszystko()   //wyglada OK, hmmm...
+        // console.log("test1")
 
     }
 
-    rozdysponujPojedynczyElement(klucz, wartosc) {
+    async rozdysponujPojedynczyElement(klucz, wartosc) {
+        console.log("\n\n\n\n\n\n\n\n\n\n")
+        this.wylisujWszystko();//test
+        console.log("\n\n\n\n\n\n\n\n\n\n")
+
+        console.log("klucz : wartosc:")
+        console.log(klucz + " : " + wartosc);
+        const kolumny = this.mozliweKolumny;
+        // console.log("const kolumny = this.mozliwekolumny:")
+        // console.log(kolumny)
         // console.log("zaalokujmy element " + klucz + " : " + wartosc)
         if (klucz in this.porownajPrzyUzyciuLike) {
             this.porownajPrzyUzyciuLike[klucz] = wartosc;
-            // console.log("Znaleziono obiekt w this.porownajPrzyUzyciuLike. Zaktualizowano obiekt.")
-        } else if (klucz in this.porownajPrzyUzyciuZnakuRownaSie) {
+            console.log("Znaleziono obiekt " + klucz + " w this.porownajPrzyUzyciuLike. Zaktualizowano obiekt.")
+        } else if (klucz in this.porownajPrzyUzyciuZnakuRownaSie) { // 
+            console.log("a w compareexact sa takie elementy: ")
+            console.log(this.porownajPrzyUzyciuZnakuRownaSie["dir"] + " to jest dir")
+            console.log(this.porownajPrzyUzyciuZnakuRownaSie["orderBy"] + " to jest orderBy")
+            console.log(this.porownajPrzyUzyciuZnakuRownaSie["offset"] + " to jest offset")
+            console.log(this.porownajPrzyUzyciuZnakuRownaSie["limit"] + " to jest limit")
+            //a sprawdza takie rzeczy ogolnie :
+            // this.porownajPrzyUzyciuZnakuRownaSie = {
+            //     "databaseName": "firmy",
+            //     "orderBy": "id_firmy",
+            //     "dir": "ASC",
+            //     "offset": 0,
+            //     "limit": 15,
+            //     "zaznaczoneKolumny": []
+            // };
             // console.log(typeof (this.porownajPrzyUzyciuZnakuRownaSie[klucz]))
-            this.porownajPrzyUzyciuZnakuRownaSie[klucz] = wartosc;// jesli klucz to string, uzywaj [] a nie kropki, bo nie zadziala!!!
-            // console.log("Znaleziono obiekt w this.porownajPrzyUzyciuZnakuRownaSie. Zaktualizowano obiekt.")
+            // if (wartosc in kolumny){
+            // this.porownajPrzyUzyciuZnakuRownaSie[klucz] = wartosc;// jesli klucz to string, uzywaj [] a nie kropki, bo nie zadziala!!!
+            // console.log("Znaleziono obiekt "+klucz+" w this.porownajPrzyUzyciuZnakuRownaSie. Zaktualizowano obiekt.")
+            // }
+            switch (klucz) {
+                case 'orderBy':
+                    console.log("klucz to orderBy vartosc to: " + wartosc)
 
+                    // console.log("if (klucz === orderBy) ")
+                    // console.log(klucz)
+                    // console.log(wartosc);
+                    // console.log("kolumny:")
+                    // console.log(kolumny);
+                    // if (kolumny.includes(wartosc)) console.log("kolumny.includes(wartosc)")
+                    if (kolumny.includes(wartosc)) { // ORAZ jesli wartosc do sortowana podana przez uzytkownika to kolumna wg ktorej mozna sortowac
+                        // console.log("if wartosc in kolumny")
+                        this.porownajPrzyUzyciuZnakuRownaSie[klucz] = wartosc;// jesli klucz to string, uzywaj [] a nie kropki, bo nie zadziala!!!
+                        // console.log("Znaleziono obiekt " + klucz + " w this.porownajPrzyUzyciuZnakuRownaSie. Zaktualizowano obiekt.")
+                    } else {
+                        console.log("watosc nie jest w kolumny")
+                    }
+                    break;
+                case 'dir':
+                    // const dirrrrr = "";
+                    // const toUpperCaseDir = (""+wartosc).toUpperCase();
+                    // console.log("klucz to dir vartosc to: " + toUpperCaseDir)
+                    // console.log("\n\n\n\n\n\n\n" + toUpperCaseDir+"\n\n\n\n\n\n\n")
+                    if (wartosc.toUpperCase() === "DESC") this.porownajPrzyUzyciuZnakuRownaSie[klucz] = wartosc.toUpperCase();
+                    break;
+                case 'offset':
+                    console.log("klucz to offset vartosc to: " + wartosc)
+
+                    const liczboweOffset = Number(wartosc);
+                    console.log("ustawiamy taki offset: " + liczboweOffset)//test
+                    if (liczboweOffset) this.porownajPrzyUzyciuZnakuRownaSie["offset"] = wartosc;//jesli podano liczbe, ustaw ja jako wartosc offset
+                    else { console.log("podana wartosc parametru 'offset' to nie liczba niestety....") };
+                    console.log("ustawil sie taki offset: " + this.porownajPrzyUzyciuZnakuRownaSie["offset"])
+                    break;
+                case "limit":
+                    console.log("klucz to limit vartosc to: " + wartosc)
+
+                    const liczboweLimit = Number(wartosc);
+                    if (liczboweLimit) this.porownajPrzyUzyciuZnakuRownaSie["limit"] = wartosc;//jesli podano liczbe, ustaw ja jako wartosc offset
+                    else { console.log("podana wartosc parametru 'limit' to nie liczba niestety....") };
+                    break;
+                case 'zaznaczoneKolumny':
+                    break;
+                default:
+                    break;
+
+            }
 
         } else if (klucz in this.ID) {
             this.ID[klucz] = wartosc;
-            // console.log("Znaleziono obiekt w this.ID. Zaktualizowano obiekt.")
+            console.log("Znaleziono obiekt " + klucz + " w this.ID. Zaktualizowano obiekt.")
         } else { console.log("Bledne zapytanie (" + klucz + " : " + wartosc + ")!") }
     }
-
+    //tutaj teraz grzebiemy
     async rozdysponujElementyZapytaniaDoBazy(parametryZRequestParams, parametryZRequestQuery) { // naraize tylko req.params bierze(prawie), req.query do zrobienia
         //console.log("for (var i in parametryZRequestParams){     ggggggggggggggggggggggggggggggggggggggggggg")
 
@@ -85,6 +172,8 @@ class KreatorZapytan {
             // else if (i in this.porownajPrzyUzyciuZnakuRownaSie) console.log("w porownajPrzyUzyciuZnakuRownaSie")
             // else if (i in this.ID) console.log("w ID")
             // else console.log("nigdzie")
+            // console.log("parametr z req.params:")
+            // console.log(i + " : " + parametryZRequestParams[i]);
             this.rozdysponujPojedynczyElement(i, parametryZRequestParams[i]);
         }
         // console.log("for (var i in parametryZRequestQuery){")
@@ -95,6 +184,8 @@ class KreatorZapytan {
             // else if (i in this.porownajPrzyUzyciuZnakuRownaSie) console.log("w porownajPrzyUzyciuZnakuRownaSie")
             // else if (i in this.ID) console.log("w ID")
             // else console.log("nigdzie")
+            // console.log("parametr z req.query:")
+            // console.log(i + " : " +parametryZRequestQuery[i]);
             this.rozdysponujPojedynczyElement(i, parametryZRequestQuery[i]);
         }
     }
@@ -146,7 +237,7 @@ class KreatorZapytan {
             if (this.porownajPrzyUzyciuLike[whereElem] === undefined) {
                 // console.log(whereElem + " is undefined");
             } else {
-            
+
                 zdefiniowaneElementyDotyczaceCzesci_where++;
                 whereQueryString += whereElem + " LIKE '" + this.porownajPrzyUzyciuLike[whereElem] + "%' AND "
             }
@@ -162,8 +253,11 @@ class KreatorZapytan {
 
 
     }
-    zapytanie_orderBy(kolumnaOrder = "id_firmy") {
-        this.koncowyStringZapytaniaSQL += "ORDER BY " + kolumnaOrder + " ";
+    zapytanie_orderBy() {
+        // console.log("this.porownajPrzyUzyciuZnakuRownaSie.orderBy:")
+        // console.log(this.porownajPrzyUzyciuZnakuRownaSie.orderBy)
+
+        this.koncowyStringZapytaniaSQL += "ORDER BY " + this.porownajPrzyUzyciuZnakuRownaSie.orderBy + " ";
     }
     zapytanie_direction() {
         this.koncowyStringZapytaniaSQL += this.porownajPrzyUzyciuZnakuRownaSie.dir + " ";

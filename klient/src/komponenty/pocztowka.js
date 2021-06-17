@@ -32,7 +32,7 @@ const Pocztowka = (props) => { //props.firma <- tu znajduja sie informacje o fir
         return info;
     })
     const iloscKluczy = kluczeFirmy.length;///
-    console.log(wartosciFirmy);
+    //console.log(wartosciFirmy);
     return<div>
         <Card>
             <CardHeader styles={styles.cardHeader}>{props.firma.nazwa}</CardHeader>
@@ -46,7 +46,7 @@ const Pocztowka = (props) => { //props.firma <- tu znajduja sie informacje o fir
                     //  </div>;
 
 
-
+                            // (pokazpuste || dlugoscstringa) && stringdopokazania <- potem pomysl
                         if (pokazPuste){
                             return <div>
                            <b> {wartosc}</b> : {props.firma[wartosc]} 
