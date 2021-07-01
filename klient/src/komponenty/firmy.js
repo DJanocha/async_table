@@ -8,6 +8,7 @@ import { v4 as uuid } from 'uuid'
 import firmyAPIURL from '../redux/reducery/firmyAPIURL.js'
 import { zmienSortowanie } from '../redux/akcje/firmyAPIURL';
 import { ZMIEN_SORTOWANIE } from '../redux/typy';
+import KreatorLinkowAPI from '../uzyteczne/KreatorLinkowAPI'
 const Firmy = () => {
     // const [prototypZapytaniaAPI, setPrototypZapytaniaAPI] = useState({
     //     sortowanieWedlug: "nazwa",
@@ -36,8 +37,10 @@ const Firmy = () => {
     // const stan
 
 
-
-
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+const kreator = new KreatorLinkowAPI();
+const a= kreator.dodaj("dir", "desc").dodaj("nazwa","Us").dodaj("miejscowosc","Wa").dodaj("gowno", "smacznego")
+        .dodaj("jedzenie", "jesc").wyswietlZawartosc();    
     //dobra, pobawmy sie tutaj z sortowaniem. zacznijmy od zmiany adresu, ktory sie wyswietla w czerwonym przycisku u gory
     const a2 = useSelector(state => state.firmyAPIURL)
     let adresURLAPI = `http://${a2.adresIP}:${a2.port}/${a2.sortowanieWedlug}?limit=${a2.limit}&offset=${a2.offset}`;
@@ -47,10 +50,10 @@ const Firmy = () => {
     // function  zmienSortowanieNaEKD(){
     //     dispatch(zmienSortowanie("ekd"))
     // }
-     const zmienSortowanie =(dupa)=>{
+     const zmienSortowanie =(nowySort)=>{
         dispatch({
             type: ZMIEN_SORTOWANIE,
-            sortowanie: dupa,
+            sortowanie: nowySort,
         })
     }
     // const zmienSortowanie = () => {
@@ -62,16 +65,23 @@ const Firmy = () => {
 
 
     //tutaj wyswietlmy sobie aktualny adres ip url, ktory przechowuje state.adresurl czy cos. dupa. todo. edit zaraz
+
+
+    // do tabeli trzeba pewnie podac takie elementy jak: rozmiar strony (ktory mozna zmienic), 
+    // -ilosc wszystkich elementow(by wiedzial, ile stron moze utworzyc, 
+    // +dane z tabeli, ktore juz sa podane 
+    //callback function, ktora pozwoli tablicy zmienic zapytanie, ktore bedzie potem wywolane przez komponent Firmy (dispatch() tu bedzie)
+
     return (
         <>
             <Button color="success" onClick={przelaczWidok}> Zmień widok </Button>
+            <Button color="info" > {a} </Button>
             <Button color="danger" onClick={()=>{zmienSortowanie("mail")}}> {adresURLAPI}</Button>
             {sieWczytuje && <p>Wczytywanie danych...</p>}
             {firmy.length > 0 && widokFirm === "pocztowki" && firmy.map((firma) => (
                 <Pocztowka firma={firma} key={uuid()} />
             ))}
-            {firmy.length > 0 && widokFirm === "tabela" && <TabelaJSON sortuj={zmienSortowanie} dane={firmy} />}///
-            {/* {firmy.length > 0 && widokFirm==="tabela" && <TabelaJSON  podejrzyjZapytanie={stanAPIURL} edytujZapytanie={dispatchAPIURL}dane={firmy} />}/// */}
+            {firmy.length > 0 && widokFirm === "tabela" && <TabelaJSON sortuj={zmienSortowanie} dane={firmy} rozmiarStrony={a2.limit}/>}///
             {firmy.length === 0 && !sieWczytuje && <p>nie znaleziono zadnej firmy</p>}
             {blad && !sieWczytuje && { blad }}
         </>)

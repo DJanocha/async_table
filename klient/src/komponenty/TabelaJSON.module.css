@@ -1,0 +1,16 @@
+.kolumna:hover{
+    cursor: pointer;
+    background:cornflowerblue;
+}
+.rzad:hover{
+    cursor: pointer;
+    background: #BABABA;
+}
+.pomoce:hover{
+    background-color: violet;
+    opacity: 3;
+}
+.pomoce{
+    background-color: pink;
+    opacity: 0.1;
+}

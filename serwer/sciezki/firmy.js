@@ -21,8 +21,8 @@ router.get('/:orderBy', async(req,res)=>{
     const pomocnik = new KreatorZapytan();
     const kontroler = new Firmy();
     const zapytanie = await pomocnik.wezStringZapytaniaSQL(req.params,req.query);//
-    // res.send(zapytanie);//wyswietl zapytanie gotowe
-    res.send(await kontroler.zapytaj(zapytanie)); // lub wyswietl odpowiedz na zapytanie
+    res.send(zapytanie);//wyswietl zapytanie gotowe
+    // res.send(await kontroler.zapytaj(zapytanie)); // lub wyswietl odpowiedz na zapytanie
 
 })
 

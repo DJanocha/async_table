@@ -1,4 +1,4 @@
-import {ZMIEN_SORTOWANIE, ZMIEN_SZUKANE_ID} from '../typy'
+import {ZMIEN_SORTOWANIE, ZMIEN_SZUKANE_ID, AKTUALIZUJ_FILTR} from '../typy'
 
 export function zmienSortowanie(noweSortowanie){
     // console.log(arguments)
@@ -12,5 +12,12 @@ export function zmienSzukaneID(noweID){
     return{
         type: ZMIEN_SZUKANE_ID,
         szukaneId: noweID
+    }
+}
+export function dodajFiltr(filtr, wartoscFiltru){
+    return {
+        type: AKTUALIZUJ_FILTR,
+        filtr, //np "miejscowosc"
+        wartoscFiltru // np "War"
     }
 }
